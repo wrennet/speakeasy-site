@@ -58,14 +58,6 @@
         max-width: 18ch;
       }
       .lead { margin-top: 14px; color: var(--muted); font-size: 17px; max-width: 58ch; line-height: 1.58; }
-      .hero-mark {
-        display: inline-block;
-        font-style: italic;
-        text-decoration: underline;
-        text-decoration-color: color-mix(in oklab, var(--accent), white 18%);
-        text-underline-offset: 0.14em;
-        text-decoration-thickness: 2px;
-      }
       .meta-strip { display:flex; gap:12px; flex-wrap:wrap; margin-top: 18px; }
       .meta-pill {
         border:1px solid var(--line);
@@ -87,14 +79,19 @@
         line-height: 1;
       }
       a.primary {
-        color: #eaf0ff;
-        background: oklch(0.41 0.09 257);
-        border-color: oklch(0.47 0.09 257);
+        color: oklch(0.16 0.03 260);
+        background: linear-gradient(135deg, oklch(0.83 0.16 68), oklch(0.78 0.17 40));
+        border-color: oklch(0.87 0.13 72);
+        box-shadow: 0 6px 16px color-mix(in oklab, oklch(0.80 0.16 52), transparent 65%);
       }
       a.primary:hover {
-        background: oklch(0.46 0.10 257);
+        background: linear-gradient(135deg, oklch(0.87 0.15 70), oklch(0.81 0.17 42));
+        border-color: oklch(0.9 0.12 75);
       }
       a.secondary { color: var(--ink); background: color-mix(in oklab, var(--panel) 82%, black 18%); }
+      a.btn { transition: transform .12s ease, box-shadow .16s ease, border-color .16s ease, background-color .16s ease; }
+      a.btn:hover { transform: translateY(-1px); }
+      a.btn:active { transform: translateY(0); }
 
       .triptych { display:grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin: 22px 0 30px; }
       .block { border: 1px solid var(--line); border-radius: 10px; padding: 14px; background: var(--panel); }
@@ -178,7 +175,7 @@
     <main class="wrap">
       <section class="hero">
         <div>
-          <h1>Private, <span class="hero-mark">uncensored</span> inference via x402.</h1>
+          <h1>Private, uncensored inference via x402.</h1>
           <p class="lead">Speakeasy Relay provides OpenAI-compatible streaming chat completions with pay-per-request USDC settlement on Base. No account required.</p>
 
           <div class="cta">
