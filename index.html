@@ -34,6 +34,11 @@
       .card p { margin: 6px 0 0; color:#9eabc8; font-size:14px; }
       code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
       pre { background:#0b0f1a; border:1px solid #1c2334; border-radius:12px; padding:14px; overflow:auto; }
+      .code-wrap { margin: 10px 0 16px; }
+      .code-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+      .code-head strong { color:#cdd8ff; font-size:14px; }
+      .copy-btn { border:1px solid #2a3142; background:#121a2d; color:#d6def2; border-radius:8px; padding:6px 10px; font-size:12px; cursor:pointer; }
+      .copy-btn:hover { border-color:#3a4666; }
       .muted { color:#96a2bf; font-size: 13px; }
       table { width:100%; border-collapse: collapse; border:1px solid #1f2739; border-radius: 12px; overflow:hidden; }
       th, td { text-align:left; padding:10px 12px; border-bottom:1px solid #1b2334; font-size:14px; }
@@ -62,13 +67,25 @@
       </section>
 
       <h2>Quick Start</h2>
-      <pre><code># 1) Unpaid probe (expect 402 Payment Required)
-curl -X POST https://api.speakeasyrelay.com/v1/chat/completions \
-  -H 'content-type: application/json' \
-  -d '{"model":"venice-uncensored","messages":[{"role":"user","content":"Say hello."}],"max_tokens":64,"stream":true}'
 
-# 2) Fetch model pricing / payment requirements
-curl https://api.speakeasyrelay.com/v1/pricing</code></pre>
+      <div class="code-wrap">
+        <div class="code-head">
+          <strong>Fetch pricing</strong>
+          <button class="copy-btn" data-copy="#cmd-pricing">Copy</button>
+        </div>
+        <pre id="cmd-pricing"><code>curl https://api.speakeasyrelay.com/v1/pricing</code></pre>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-head">
+          <strong>Unpaid probe (expect 402)</strong>
+          <button class="copy-btn" data-copy="#cmd-unpaid">Copy</button>
+        </div>
+        <pre id="cmd-unpaid"><code>curl -X POST https://api.speakeasyrelay.com/v1/chat/completions \
+  -H 'content-type: application/json' \
+  -d '{"model":"venice-uncensored","messages":[{"role":"user","content":"Say hello."}],"max_tokens":64,"stream":true}'</code></pre>
+      </div>
+
       <p class="muted">Clients pre-sign using pricing requirements to skip first 402 round-trip.</p>
 
       <h2>Model Pricing (typical request)</h2>
@@ -90,5 +107,24 @@ curl https://api.speakeasyrelay.com/v1/pricing</code></pre>
         <a href="https://www.x402scan.com/server/084f9441-37df-4152-b586-0d3e43cfc81b" target="_blank" rel="noreferrer">x402scan</a>
       </footer>
     </main>
+    <script>
+      document.querySelectorAll('.copy-btn').forEach((btn) => {
+        btn.addEventListener('click', async () => {
+          const selector = btn.getAttribute('data-copy');
+          const el = selector ? document.querySelector(selector) : null;
+          if (!el) return;
+          const text = (el.textContent || '').trim();
+          try {
+            await navigator.clipboard.writeText(text);
+            const prev = btn.textContent;
+            btn.textContent = 'Copied';
+            setTimeout(() => (btn.textContent = prev), 1200);
+          } catch {
+            btn.textContent = 'Failed';
+            setTimeout(() => (btn.textContent = 'Copy'), 1200);
+          }
+        });
+      });
+    </script>
   </body>
 </html>
