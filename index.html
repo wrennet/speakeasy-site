@@ -68,7 +68,13 @@
         line-height: 1.35;
         color: var(--muted);
       }
-      .meta-pill .label { color: color-mix(in oklab, var(--muted), white 12%); font-weight: 500; }
+      .meta-pill .label {
+        color: color-mix(in oklab, var(--muted), white 12%);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-size: 11px;
+      }
       .meta-pill .value { color: var(--ink); font-weight: 600; }
       .meta-pill .mono { font-size: 12px; }
 
@@ -111,8 +117,10 @@
         background: transparent;
         color: var(--muted);
         padding: 6px 10px;
-        font-size: 12.5px;
+        font-size: 12px;
         font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.045em;
         border-radius: 8px;
         cursor: pointer;
         transition: color .15s ease, background-color .15s ease, border-color .15s ease;
@@ -179,8 +187,8 @@
           <p class="lead">Speakeasy Relay provides OpenAI-compatible streaming chat completions with pay-per-request USDC settlement on Base. No account required.</p>
 
           <div class="cta">
-            <a class="btn primary" href="https://www.x402scan.com/server/084f9441-37df-4152-b586-0d3e43cfc81b" target="_blank" rel="noreferrer">Try on x402scan</a>
-            <a class="btn secondary" href="https://api.speakeasyrelay.com/.well-known/x402" target="_blank" rel="noreferrer">Discovery Doc</a>
+            <a class="btn primary" href="https://www.x402scan.com/server/084f9441-37df-4152-b586-0d3e43cfc81b" target="_blank" rel="noreferrer">Try on X402scan</a>
+            <a class="btn secondary" href="https://api.speakeasyrelay.com/.well-known/x402" target="_blank" rel="noreferrer">Discovery</a>
             <a class="btn secondary" href="https://api.speakeasyrelay.com/v1/pricing" target="_blank" rel="noreferrer">Pricing</a>
           </div>
 
