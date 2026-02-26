@@ -106,7 +106,14 @@
       .block p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.45; }
       .mono { font-family: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; }
 
-      h2 { margin: 32px 0 10px; font-family: 'Libre Baskerville', Georgia, serif; letter-spacing: -0.008em; }
+      h2 {
+        margin: 32px 0 10px;
+        font-family: 'DM Sans', system-ui, sans-serif;
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: 0;
+        line-height: 1.2;
+      }
       .tab-row {
         display:flex;
         gap:6px;
@@ -121,6 +128,7 @@
         font-family: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
         font-size: 11.5px;
         font-weight: 500;
+        line-height: 1.2;
         text-transform: uppercase;
         letter-spacing: 0.03em;
         border-radius: 8px;
@@ -147,7 +155,14 @@
       .tab-panel.active { display: block; }
       .code-wrap { margin: 6px 0 12px; }
       .code-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; }
-      .code-head strong { font-size:14px; color: var(--ink); }
+      .code-head strong {
+        font-family: 'DM Sans', system-ui, sans-serif;
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 1.2;
+        letter-spacing: 0;
+        color: var(--ink);
+      }
       pre { margin: 0; overflow:auto; border:1px solid var(--line); border-radius:10px; padding:14px; background: color-mix(in oklab, var(--panel) 78%, black 22%); }
       code { font-family: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12.8px; color: oklch(0.9 0.02 265); }
       .copy-btn {
