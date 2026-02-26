@@ -35,22 +35,17 @@
         background: var(--bg);
         color: var(--ink);
       }
-      .wrap { max-width: 1080px; margin: 0 auto; padding: 56px 22px 84px; }
-      .kicker {
-        display: inline-flex; align-items: center; gap: 8px;
-        padding: 8px 12px; border: 1px solid var(--line); border-radius: 999px;
-        background: color-mix(in oklab, var(--panel) 80%, black 20%); color: var(--muted); font-size: 12px;
-      }
+      .wrap { max-width: 1080px; margin: 0 auto; padding: 64px 24px 92px; }
       .hero { margin-top: 14px; }
       h1 {
         margin: 0;
         font-family: 'Space Grotesk', sans-serif;
-        font-size: clamp(28px, 3.4vw, 40px);
-        line-height: 1.1;
-        letter-spacing: -0.01em;
-        max-width: 20ch;
+        font-size: clamp(34px, 4.2vw, 50px);
+        line-height: 1.08;
+        letter-spacing: -0.012em;
+        max-width: 18ch;
       }
-      .lead { margin-top: 12px; color: var(--muted); font-size: 16px; max-width: 68ch; }
+      .lead { margin-top: 14px; color: var(--muted); font-size: 17px; max-width: 66ch; line-height: 1.5; }
       .meta-strip { display:flex; gap:12px; flex-wrap:wrap; margin-top: 18px; }
       .meta-pill {
         border:1px solid var(--line);
@@ -63,18 +58,18 @@
       }
       .meta-pill b { color: var(--ink); font-weight: 600; }
 
-      .cta { display:flex; gap:10px; flex-wrap:wrap; margin: 20px 0 8px; }
+      .cta { display:flex; gap:10px; flex-wrap:wrap; margin: 22px 0 10px; }
       a.btn {
-        text-decoration:none; border-radius:8px; padding:11px 14px; font-weight:600; font-size: 14px;
+        text-decoration:none; border-radius:8px; padding:12px 15px; font-weight:600; font-size: 14px;
         border:1px solid var(--line);
       }
       a.primary {
         color: #eaf0ff;
-        background: oklch(0.47 0.14 264);
-        border-color: oklch(0.52 0.13 264);
+        background: oklch(0.45 0.11 255);
+        border-color: oklch(0.50 0.10 255);
       }
       a.primary:hover {
-        background: oklch(0.52 0.14 264);
+        background: oklch(0.50 0.12 255);
       }
       a.secondary { color: var(--ink); background: color-mix(in oklab, var(--panel) 82%, black 18%); }
 
@@ -90,7 +85,19 @@
       .code-head strong { font-size:14px; color: color-mix(in oklab, var(--ink), var(--accent) 12%); }
       pre { margin: 0; overflow:auto; border:1px solid var(--line); border-radius:10px; padding:14px; background: color-mix(in oklab, var(--panel) 78%, black 22%); }
       code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12.8px; color: oklch(0.9 0.02 265); }
-      .copy-btn { border:1px solid var(--line); background: var(--panel-2); color: var(--ink); border-radius:6px; padding:6px 10px; font-size:12px; cursor:pointer; }
+      .copy-btn {
+        border:1px solid var(--line);
+        background: var(--panel-2);
+        color: var(--ink);
+        border-radius:6px;
+        width:30px;
+        height:30px;
+        display:inline-flex;
+        align-items:center;
+        justify-content:center;
+        font-size:14px;
+        cursor:pointer;
+      }
       .muted { color: var(--muted); font-size: 13px; }
 
       table { width:100%; border-collapse: collapse; border:1px solid var(--line); border-radius: 10px; overflow:hidden; }
@@ -109,15 +116,13 @@
   </head>
   <body>
     <main class="wrap">
-      <span class="kicker">🐦 x402scan registered · settlement-finality verified</span>
-
       <section class="hero">
         <div>
           <h1>Private, uncensored inference via x402.</h1>
           <p class="lead">Speakeasy Relay provides OpenAI-compatible streaming chat completions with pay-per-request USDC settlement on Base. No account required.</p>
 
           <div class="cta">
-            <a class="btn primary" href="https://www.x402scan.com/server/084f9441-37df-4152-b586-0d3e43cfc81b" target="_blank" rel="noreferrer">Try in x402scan</a>
+            <a class="btn primary" href="https://www.x402scan.com/server/084f9441-37df-4152-b586-0d3e43cfc81b" target="_blank" rel="noreferrer">Try on x402scan</a>
             <a class="btn secondary" href="https://api.speakeasyrelay.com/.well-known/x402" target="_blank" rel="noreferrer">Discovery Doc</a>
             <a class="btn secondary" href="https://api.speakeasyrelay.com/v1/pricing" target="_blank" rel="noreferrer">Pricing</a>
           </div>
@@ -141,7 +146,7 @@
       <div class="code-wrap">
         <div class="code-head">
           <strong>Fetch pricing</strong>
-          <button class="copy-btn" data-copy="#cmd-pricing">Copy</button>
+          <button class="copy-btn" data-copy="#cmd-pricing" aria-label="Copy pricing command" title="Copy">⧉</button>
         </div>
         <pre id="cmd-pricing"><code>curl https://api.speakeasyrelay.com/v1/pricing</code></pre>
       </div>
@@ -149,7 +154,7 @@
       <div class="code-wrap">
         <div class="code-head">
           <strong>Unpaid probe (expect 402)</strong>
-          <button class="copy-btn" data-copy="#cmd-unpaid">Copy</button>
+          <button class="copy-btn" data-copy="#cmd-unpaid" aria-label="Copy unpaid probe command" title="Copy">⧉</button>
         </div>
         <pre id="cmd-unpaid"><code>curl -X POST https://api.speakeasyrelay.com/v1/chat/completions \
   -H 'content-type: application/json' \
@@ -159,7 +164,7 @@
       <div class="code-wrap">
         <div class="code-head">
           <strong>Chat in 60s (Node.js)</strong>
-          <button class="copy-btn" data-copy="#cmd-chat60">Copy</button>
+          <button class="copy-btn" data-copy="#cmd-chat60" aria-label="Copy chat quickstart command" title="Copy">⧉</button>
         </div>
         <pre id="cmd-chat60"><code>npm i x402 viem
 
@@ -209,17 +214,6 @@ const { createPaymentHeader, selectPaymentRequirements } = require("x402/client"
       </div>
       <p class="muted">Pre-signing from <span class="mono">/v1/pricing</span> avoids first-request 402 round-trip.</p>
 
-      <h2>Model Pricing (typical request)</h2>
-      <table>
-        <thead><tr><th>Model</th><th>Typical Price</th><th>Best For</th></tr></thead>
-        <tbody>
-          <tr><td><code>venice-uncensored</code></td><td>$0.001</td><td>Fast default chat</td></tr>
-          <tr><td><code>deepseek-v3.2</code></td><td>$0.001</td><td>General reasoning</td></tr>
-          <tr><td><code>qwen3-235b-a22b-thinking-2507</code></td><td>$0.002</td><td>Longer thinking tasks</td></tr>
-          <tr><td><code>qwen3-coder-480b-a35b-instruct</code></td><td>$0.002</td><td>Coding-heavy tasks</td></tr>
-        </tbody>
-      </table>
-
       <footer>
         <a href="https://api.speakeasyrelay.com/v1/chat/completions" target="_blank" rel="noreferrer">API</a>
         <a href="https://api.speakeasyrelay.com/.well-known/x402" target="_blank" rel="noreferrer">Discovery</a>
@@ -237,11 +231,11 @@ const { createPaymentHeader, selectPaymentRequirements } = require("x402/client"
           try {
             await navigator.clipboard.writeText(text);
             const prev = btn.textContent;
-            btn.textContent = 'Copied';
-            setTimeout(() => (btn.textContent = prev), 1200);
+            btn.textContent = '✓';
+            setTimeout(() => (btn.textContent = prev), 1000);
           } catch {
-            btn.textContent = 'Failed';
-            setTimeout(() => (btn.textContent = 'Copy'), 1200);
+            btn.textContent = '!';
+            setTimeout(() => (btn.textContent = '⧉'), 1000);
           }
         });
       });
