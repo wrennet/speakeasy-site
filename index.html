@@ -165,20 +165,176 @@
 
       <div class="code-wrap">
         <div class="code-head">
-          <strong>Verify in 60s</strong>
-          <button class="copy-btn" data-copy="#cmd-chat60" aria-label="Copy 60-second verification command" title="Copy">⧉</button>
+          <strong>Verify in 60s (paste into a file)</strong>
+          <button class="copy-btn" data-copy="#cmd-chat60" aria-label="Copy 60-second verification script" title="Copy">⧉</button>
         </div>
-        <pre id="cmd-chat60"><code>PRIVATE_KEY=0xYOUR_PRIVATE_KEY node scripts/chat-in-60s.cjs</code></pre>
+        <pre id="cmd-chat60"><code>cat > chat-in-60s.cjs <<'EOF'
+const { privateKeyToAccount } = require("viem/accounts");
+const { createPaymentHeader, selectPaymentRequirements } = require("x402/client");
+
+async function main() {
+  const PRIVATE_KEY = process.env.PRIVATE_KEY;
+  const GATEWAY = process.env.GATEWAY_URL || "https://api.speakeasyrelay.com";
+  if (!PRIVATE_KEY) throw new Error("Missing PRIVATE_KEY env var");
+
+  const account = privateKeyToAccount(PRIVATE_KEY);
+  const model = "venice-uncensored";
+
+  const pricingRes = await fetch(`${GATEWAY}/v1/pricing`);
+  const pricing = await pricingRes.json();
+  const selected = selectPaymentRequirements(pricing.models[model].accepts, "base");
+
+  const req = {
+    ...selected,
+    network: selected.network === "eip155:8453" ? "base" : selected.network,
+    maxAmountRequired: selected.maxAmountRequired || selected.amount,
+    resource: selected.resource || pricing.models[model].resource?.url || `${GATEWAY}/v1/chat/completions`,
+  };
+
+  const payment = await createPaymentHeader(account, pricing.models[model].x402Version, req);
+
+  const body = {
+    model,
+    messages: [{ role: "user", content: "Say hello in one sentence." }],
+    max_tokens: 64,
+    stream: true,
+  };
+
+  const res = await fetch(`${GATEWAY}/v1/chat/completions`, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "payment-signature": payment,
+      "x-payment": payment,
+    },
+    body: JSON.stringify(body),
+  });
+
+  console.log(`HTTP ${res.status}`);
+  console.log(await res.text());
+}
+
+main().catch((err) => {
+  console.error("❌", err.message || err);
+  process.exit(1);
+});
+EOF
+
+npm i x402 viem
+PRIVATE_KEY=0xYOUR_PRIVATE_KEY node chat-in-60s.cjs</code></pre>
       </div>
 
       <div class="code-wrap">
         <div class="code-head">
-          <strong>Local interactive chat</strong>
-          <button class="copy-btn" data-copy="#cmd-chatlocal" aria-label="Copy local chat command" title="Copy">⧉</button>
+          <strong>Local interactive chat (paste into a file)</strong>
+          <button class="copy-btn" data-copy="#cmd-chatlocal" aria-label="Copy local chat script" title="Copy">⧉</button>
         </div>
-        <pre id="cmd-chatlocal"><code>PRIVATE_KEY=0xYOUR_PRIVATE_KEY node scripts/chat-local.cjs</code></pre>
+        <pre id="cmd-chatlocal"><code>cat > chat-local.cjs <<'EOF'
+const readline = require("node:readline/promises");
+const { stdin, stdout } = require("node:process");
+const { privateKeyToAccount } = require("viem/accounts");
+const { createPaymentHeader, selectPaymentRequirements } = require("x402/client");
+
+const GATEWAY = process.env.GATEWAY_URL || "https://api.speakeasyrelay.com";
+const PRIVATE_KEY = process.env.PRIVATE_KEY;
+const MODEL = process.env.MODEL || "venice-uncensored";
+const MAX_TOKENS = Number(process.env.MAX_TOKENS || 256);
+
+if (!PRIVATE_KEY) {
+  console.error("❌ Missing PRIVATE_KEY env var");
+  process.exit(1);
+}
+
+const account = privateKeyToAccount(PRIVATE_KEY);
+const history = [{ role: "system", content: "You are helpful and concise." }];
+
+function normalizeReq(selected, topResourceUrl) {
+  return {
+    ...selected,
+    network: selected.network === "eip155:8453" ? "base" : selected.network,
+    maxAmountRequired: selected.maxAmountRequired || selected.amount,
+    resource: selected.resource || topResourceUrl || `${GATEWAY}/v1/chat/completions`,
+  };
+}
+
+async function getPricingReq(model) {
+  const pricingRes = await fetch(`${GATEWAY}/v1/pricing`);
+  const pricing = await pricingRes.json();
+  const modelInfo = pricing.models?.[model];
+  if (!modelInfo) throw new Error(`Model not found: ${model}`);
+  const selected = selectPaymentRequirements(modelInfo.accepts, "base");
+  return { x402Version: modelInfo.x402Version, req: normalizeReq(selected, modelInfo.resource?.url) };
+}
+
+async function paidChatOnce(model) {
+  const { x402Version, req } = await getPricingReq(model);
+  const payment = await createPaymentHeader(account, x402Version, req);
+
+  const res = await fetch(`${GATEWAY}/v1/chat/completions`, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      "payment-signature": payment,
+      "x-payment": payment,
+    },
+    body: JSON.stringify({ model, messages: history, max_tokens: MAX_TOKENS, stream: true }),
+  });
+
+  const raw = await res.text();
+  const lines = raw.split("\n");
+  let content = "";
+  let settlement = null;
+  let event = null;
+
+  for (const line of lines) {
+    if (line.startsWith("event: ")) { event = line.slice(7).trim(); continue; }
+    if (!line.startsWith("data: ")) continue;
+    const payload = line.slice(6).trim();
+    if (!payload || payload === "[DONE]") continue;
+
+    try {
+      if (event === "payment_settlement") { settlement = JSON.parse(payload); event = null; continue; }
+      const parsed = JSON.parse(payload);
+      content += parsed?.choices?.[0]?.delta?.content || "";
+      event = null;
+    } catch { event = null; }
+  }
+
+  return { content: content.trim(), settlement };
+}
+
+(async () => {
+  console.log(`🐦 Local paid chat\nGateway: ${GATEWAY}\nWallet: ${account.address}\nModel: ${MODEL}`);
+  console.log("Type /exit to quit, /clear to reset conversation.\n");
+
+  const rl = readline.createInterface({ input: stdin, output: stdout });
+  while (true) {
+    const input = (await rl.question("you> ")).trim();
+    if (!input) continue;
+    if (input === "/exit") break;
+    if (input === "/clear") { history.length = 1; console.log("cleared.\n"); continue; }
+
+    history.push({ role: "user", content: input });
+    try {
+      const { content, settlement } = await paidChatOnce(MODEL);
+      history.push({ role: "assistant", content: content || "(no content)" });
+      console.log(`assistant> ${content || "(no content)"}`);
+      if (settlement) console.log(`settlement> ${settlement.settlement_status || "unknown"}`);
+      console.log();
+    } catch (err) {
+      console.error(`❌ ${err.message || err}`);
+      history.pop();
+      console.log();
+    }
+  }
+  rl.close();
+})();
+EOF
+
+npm i x402 viem
+PRIVATE_KEY=0xYOUR_PRIVATE_KEY node chat-local.cjs</code></pre>
       </div>
-      <p class="muted">These scripts live in the private Speakeasy gateway repo and perform signed paid requests against the live endpoint.</p>
+      <p class="muted">These are self-contained scripts you can run locally against the live Speakeasy endpoint.</p>
 
       <footer>
         <a href="https://api.speakeasyrelay.com/v1/chat/completions" target="_blank" rel="noreferrer">API</a>
