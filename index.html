@@ -82,6 +82,23 @@
       .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; }
 
       h2 { margin: 38px 0 12px; font-family: 'Space Grotesk', sans-serif; letter-spacing: -0.01em; }
+      .tab-row { display:flex; gap:8px; flex-wrap:wrap; margin: 8px 0 14px; }
+      .tab-btn {
+        border:1px solid var(--line);
+        background: color-mix(in oklab, var(--panel) 82%, black 18%);
+        color: var(--muted);
+        border-radius: 999px;
+        padding: 8px 12px;
+        font-size: 12px;
+        cursor: pointer;
+      }
+      .tab-btn.active {
+        color: var(--ink);
+        border-color: oklch(0.50 0.10 255);
+        background: color-mix(in oklab, oklch(0.45 0.11 255) 28%, var(--panel) 72%);
+      }
+      .tab-panel { display: none; }
+      .tab-panel.active { display: block; }
       .code-wrap { margin: 10px 0 16px; }
       .code-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
       .code-head strong { font-size:14px; color: var(--ink); }
@@ -145,30 +162,42 @@
       </section>
 
       <h2>Quick Start</h2>
-      <div class="code-wrap">
-        <div class="code-head">
-          <strong>Fetch pricing</strong>
-          <button class="copy-btn" data-copy="#cmd-pricing" aria-label="Copy pricing command" title="Copy">⧉</button>
-        </div>
-        <pre id="cmd-pricing"><code>curl https://api.speakeasyrelay.com/v1/pricing</code></pre>
+      <div class="tab-row" role="tablist" aria-label="Quickstart code tabs">
+        <button class="tab-btn active" data-tab="tab-pricing" role="tab" aria-selected="true">1) Pricing</button>
+        <button class="tab-btn" data-tab="tab-unpaid" role="tab" aria-selected="false">2) Probe 402</button>
+        <button class="tab-btn" data-tab="tab-verify" role="tab" aria-selected="false">3) Verify</button>
+        <button class="tab-btn" data-tab="tab-chat" role="tab" aria-selected="false">4) Local Chat</button>
       </div>
 
-      <div class="code-wrap">
-        <div class="code-head">
-          <strong>Unpaid probe (expect 402)</strong>
-          <button class="copy-btn" data-copy="#cmd-unpaid" aria-label="Copy unpaid probe command" title="Copy">⧉</button>
+      <div class="tab-panel active" id="tab-pricing" role="tabpanel">
+        <div class="code-wrap">
+          <div class="code-head">
+            <strong>Fetch pricing</strong>
+            <button class="copy-btn" data-copy="#cmd-pricing" aria-label="Copy pricing command" title="Copy">⧉</button>
+          </div>
+          <pre id="cmd-pricing"><code>curl https://api.speakeasyrelay.com/v1/pricing</code></pre>
         </div>
-        <pre id="cmd-unpaid"><code>curl -X POST https://api.speakeasyrelay.com/v1/chat/completions \
+      </div>
+
+      <div class="tab-panel" id="tab-unpaid" role="tabpanel">
+        <div class="code-wrap">
+          <div class="code-head">
+            <strong>Unpaid probe (expect 402)</strong>
+            <button class="copy-btn" data-copy="#cmd-unpaid" aria-label="Copy unpaid probe command" title="Copy">⧉</button>
+          </div>
+          <pre id="cmd-unpaid"><code>curl -X POST https://api.speakeasyrelay.com/v1/chat/completions \
   -H 'content-type: application/json' \
   -d '{"model":"venice-uncensored","messages":[{"role":"user","content":"Say hello."}],"max_tokens":64,"stream":true}'</code></pre>
+        </div>
       </div>
 
-      <div class="code-wrap">
-        <div class="code-head">
-          <strong>Verify in 60s (paste into a file)</strong>
-          <button class="copy-btn" data-copy="#cmd-chat60" aria-label="Copy 60-second verification script" title="Copy">⧉</button>
-        </div>
-        <pre id="cmd-chat60"><code>cat > chat-in-60s.cjs <<'EOF'
+      <div class="tab-panel" id="tab-verify" role="tabpanel">
+        <div class="code-wrap">
+          <div class="code-head">
+            <strong>Verify script (paste into a file)</strong>
+            <button class="copy-btn" data-copy="#cmd-chat60" aria-label="Copy verification script" title="Copy">⧉</button>
+          </div>
+          <pre id="cmd-chat60"><code>cat > chat-in-60s.cjs <<'EOF'
 const { privateKeyToAccount } = require("viem/accounts");
 const { createPaymentHeader, selectPaymentRequirements } = require("x402/client");
 
@@ -222,14 +251,16 @@ EOF
 
 npm i x402 viem
 PRIVATE_KEY=0xYOUR_PRIVATE_KEY node chat-in-60s.cjs</code></pre>
+        </div>
       </div>
 
-      <div class="code-wrap">
-        <div class="code-head">
-          <strong>Local interactive chat (paste into a file)</strong>
-          <button class="copy-btn" data-copy="#cmd-chatlocal" aria-label="Copy local chat script" title="Copy">⧉</button>
-        </div>
-        <pre id="cmd-chatlocal"><code>cat > chat-local.cjs <<'EOF'
+      <div class="tab-panel" id="tab-chat" role="tabpanel">
+        <div class="code-wrap">
+          <div class="code-head">
+            <strong>Local interactive chat (paste into a file)</strong>
+            <button class="copy-btn" data-copy="#cmd-chatlocal" aria-label="Copy local chat script" title="Copy">⧉</button>
+          </div>
+          <pre id="cmd-chatlocal"><code>cat > chat-local.cjs <<'EOF'
 const readline = require("node:readline/promises");
 const { stdin, stdout } = require("node:process");
 const { privateKeyToAccount } = require("viem/accounts");
@@ -333,6 +364,7 @@ EOF
 
 npm i x402 viem
 PRIVATE_KEY=0xYOUR_PRIVATE_KEY node chat-local.cjs</code></pre>
+        </div>
       </div>
       <p class="muted">These are self-contained scripts you can run locally against the live Speakeasy endpoint.</p>
 
@@ -344,6 +376,24 @@ PRIVATE_KEY=0xYOUR_PRIVATE_KEY node chat-local.cjs</code></pre>
     </main>
 
     <script>
+      document.querySelectorAll('.tab-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const target = btn.getAttribute('data-tab');
+          if (!target) return;
+
+          document.querySelectorAll('.tab-btn').forEach((b) => {
+            b.classList.remove('active');
+            b.setAttribute('aria-selected', 'false');
+          });
+          btn.classList.add('active');
+          btn.setAttribute('aria-selected', 'true');
+
+          document.querySelectorAll('.tab-panel').forEach((panel) => {
+            panel.classList.toggle('active', panel.id === target);
+          });
+        });
+      });
+
       document.querySelectorAll('.copy-btn').forEach((btn) => {
         btn.addEventListener('click', async () => {
           const selector = btn.getAttribute('data-copy');
