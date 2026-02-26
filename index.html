@@ -13,25 +13,33 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Speakeasy Relay" />
     <meta name="twitter:description" content="Private inference via x402 — pay-per-call, no accounts." />
-    <meta name="twitter:image" content="/og.png" />
+    <meta name="twitter:image" content="https://speakeasyrelay.com/favicon.svg" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <style>
       :root { color-scheme: dark; }
       body { margin: 0; font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: #08090d; color: #e8ebf2; }
-      .wrap { max-width: 920px; margin: 0 auto; padding: 48px 20px 72px; }
+      .wrap { max-width: 980px; margin: 0 auto; padding: 48px 20px 72px; }
       .badge { display:inline-block; font-size:12px; padding:6px 10px; border:1px solid #2a3142; border-radius:999px; color:#9ab0ff; background:#111628; }
-      h1 { font-size: 44px; margin: 14px 0 10px; line-height:1.1; }
-      p.lead { font-size: 18px; color: #aeb7cc; max-width: 720px; }
+      h1 { font-size: 46px; margin: 14px 0 10px; line-height:1.1; }
+      h2 { margin-top: 36px; }
+      p.lead { font-size: 18px; color: #aeb7cc; max-width: 780px; }
       .cta { display:flex; gap:12px; flex-wrap:wrap; margin: 24px 0 30px; }
       a.btn { text-decoration:none; border-radius:10px; padding:12px 16px; font-weight:600; }
       a.primary { background:#5b7cff; color:white; }
       a.secondary { border:1px solid #2a3142; color:#d6def2; }
-      .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; margin: 14px 0 28px; }
+      .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px; margin: 14px 0 28px; }
       .card { border:1px solid #202739; background:#0f1320; border-radius:14px; padding:16px; }
       .card h3 { margin:0 0 8px; font-size:15px; color:#cdd8ff; }
+      .card p { margin: 6px 0 0; color:#9eabc8; font-size:14px; }
       code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
       pre { background:#0b0f1a; border:1px solid #1c2334; border-radius:12px; padding:14px; overflow:auto; }
       .muted { color:#96a2bf; font-size: 13px; }
+      table { width:100%; border-collapse: collapse; border:1px solid #1f2739; border-radius: 12px; overflow:hidden; }
+      th, td { text-align:left; padding:10px 12px; border-bottom:1px solid #1b2334; font-size:14px; }
+      th { color:#cdd8ff; background:#101726; }
+      tr:last-child td { border-bottom:none; }
+      footer { margin-top: 44px; padding-top: 22px; border-top:1px solid #1d2536; color:#94a1bf; font-size:13px; display:flex; gap:14px; flex-wrap:wrap; }
+      footer a { color:#b3c3ff; text-decoration:none; }
     </style>
   </head>
   <body>
@@ -41,22 +49,53 @@
       <p class="lead">OpenAI-compatible private inference gateway. Pay in USDC on Base via x402. Streaming responses, no accounts, no subscriptions.</p>
 
       <div class="cta">
-        <a class="btn primary" href="https://www.x402scan.com/server/084f9441-37df-4152-b586-0d3e43cfc81b" target="_blank" rel="noreferrer">View on x402scan</a>
+        <a class="btn primary" href="https://www.x402scan.com/server/084f9441-37df-4152-b586-0d3e43cfc81b" target="_blank" rel="noreferrer">Try in x402scan</a>
         <a class="btn secondary" href="https://api.speakeasyrelay.com/.well-known/x402" target="_blank" rel="noreferrer">Discovery Doc</a>
         <a class="btn secondary" href="https://api.speakeasyrelay.com/v1/pricing" target="_blank" rel="noreferrer">Pricing</a>
       </div>
 
       <section class="grid">
-        <article class="card"><h3>Endpoint</h3><code>POST /v1/chat/completions</code></article>
-        <article class="card"><h3>Discovery</h3><code>/.well-known/x402</code></article>
-        <article class="card"><h3>Network</h3><code>Base (eip155:8453)</code></article>
+        <article class="card"><h3>Endpoint</h3><code>POST /v1/chat/completions</code><p>OpenAI-compatible streaming chat endpoint.</p></article>
+        <article class="card"><h3>Network</h3><code>Base (eip155:8453)</code><p>USDC settlements via x402 facilitator path.</p></article>
+        <article class="card"><h3>Settlement</h3><code>On-chain verified</code><p>Production tests validate tx success + transfer events.</p></article>
       </section>
 
       <h2>Quick Start</h2>
-      <pre><code>curl -X POST https://api.speakeasyrelay.com/v1/chat/completions \
+      <pre><code># 1) Unpaid probe (expect 402 Payment Required)
+curl -X POST https://api.speakeasyrelay.com/v1/chat/completions \
   -H 'content-type: application/json' \
-  -d '{"model":"venice-uncensored","messages":[{"role":"user","content":"Say hello."}],"max_tokens":64,"stream":true}'</code></pre>
-      <p class="muted">Unpaid requests return HTTP 402 with payment requirements.</p>
+  -d '{"model":"venice-uncensored","messages":[{"role":"user","content":"Say hello."}],"max_tokens":64,"stream":true}'
+
+# 2) Fetch model pricing / payment requirements
+curl https://api.speakeasyrelay.com/v1/pricing</code></pre>
+      <p class="muted">Clients pre-sign using pricing requirements to skip first 402 round-trip.</p>
+
+      <h2>Model Pricing (typical request)</h2>
+      <table>
+        <thead>
+          <tr><th>Model</th><th>Typical Price</th><th>Best For</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>venice-uncensored</code></td><td>$0.001</td><td>Fast default chat</td></tr>
+          <tr><td><code>deepseek-v3.2</code></td><td>$0.001</td><td>General reasoning</td></tr>
+          <tr><td><code>qwen3-235b-a22b-thinking-2507</code></td><td>$0.002</td><td>Longer thinking tasks</td></tr>
+          <tr><td><code>qwen3-coder-480b-a35b-instruct</code></td><td>$0.002</td><td>Coding-heavy tasks</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Developer Notes</h2>
+      <ul>
+        <li>Context grows cost — summarize or clear history for long agent sessions.</li>
+        <li>Use cheaper default models for iterative loops, switch to heavy models when needed.</li>
+        <li>For strict economics checks, use the settlement-finality script in the Speakeasy repo.</li>
+      </ul>
+
+      <footer>
+        <a href="https://api.speakeasyrelay.com/v1/chat/completions" target="_blank" rel="noreferrer">API</a>
+        <a href="https://api.speakeasyrelay.com/.well-known/x402" target="_blank" rel="noreferrer">Discovery</a>
+        <a href="https://github.com/wrennet/speakeasy" target="_blank" rel="noreferrer">Gateway Repo</a>
+        <a href="https://github.com/wrennet/speakeasy-site" target="_blank" rel="noreferrer">Site Repo</a>
+      </footer>
     </main>
   </body>
 </html>
