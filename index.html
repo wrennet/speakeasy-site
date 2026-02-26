@@ -145,9 +145,22 @@
       </section>
 
       <h2>Quick Start</h2>
-      <div class="meta-strip" style="margin-top: 8px; margin-bottom: 18px;">
-        <span class="meta-pill"><span class="label">Fetch pricing</span> · <span class="value mono">curl https://api.speakeasyrelay.com/v1/pricing</span></span>
-        <span class="meta-pill"><span class="label">Unpaid probe</span> · <span class="value mono">POST /v1/chat/completions (expect 402)</span></span>
+      <div class="code-wrap">
+        <div class="code-head">
+          <strong>Fetch pricing</strong>
+          <button class="copy-btn" data-copy="#cmd-pricing" aria-label="Copy pricing command" title="Copy">⧉</button>
+        </div>
+        <pre id="cmd-pricing"><code>curl https://api.speakeasyrelay.com/v1/pricing</code></pre>
+      </div>
+
+      <div class="code-wrap">
+        <div class="code-head">
+          <strong>Unpaid probe (expect 402)</strong>
+          <button class="copy-btn" data-copy="#cmd-unpaid" aria-label="Copy unpaid probe command" title="Copy">⧉</button>
+        </div>
+        <pre id="cmd-unpaid"><code>curl -X POST https://api.speakeasyrelay.com/v1/chat/completions \
+  -H 'content-type: application/json' \
+  -d '{"model":"venice-uncensored","messages":[{"role":"user","content":"Say hello."}],"max_tokens":64,"stream":true}'</code></pre>
       </div>
 
       <div class="code-wrap">
