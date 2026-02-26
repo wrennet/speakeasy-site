@@ -18,10 +18,10 @@
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <style>
       :root { color-scheme: dark; }
-      body { margin: 0; font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: #08090d; color: #e8ebf2; }
-      .wrap { max-width: 980px; margin: 0 auto; padding: 48px 20px 72px; }
+      body { margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: radial-gradient(1200px 700px at 80% -10%, #1a2440 0%, #08090d 45%); color: #e8ebf2; }
+      .wrap { max-width: 980px; margin: 0 auto; padding: 52px 20px 80px; }
       .badge { display:inline-block; font-size:12px; padding:6px 10px; border:1px solid #2a3142; border-radius:999px; color:#9ab0ff; background:#111628; }
-      h1 { font-size: 46px; margin: 14px 0 10px; line-height:1.1; }
+      h1 { font-size: clamp(40px, 5vw, 58px); margin: 14px 0 10px; line-height:1.05; letter-spacing: -0.02em; }
       h2 { margin-top: 36px; }
       p.lead { font-size: 18px; color: #aeb7cc; max-width: 780px; }
       .cta { display:flex; gap:12px; flex-wrap:wrap; margin: 24px 0 30px; }
@@ -29,7 +29,7 @@
       a.primary { background:#5b7cff; color:white; }
       a.secondary { border:1px solid #2a3142; color:#d6def2; }
       .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px; margin: 14px 0 28px; }
-      .card { border:1px solid #202739; background:#0f1320; border-radius:14px; padding:16px; }
+      .card { border:1px solid #28314a; background:linear-gradient(180deg,#111828,#0f1320); border-radius:12px; padding:16px; }
       .card h3 { margin:0 0 8px; font-size:15px; color:#cdd8ff; }
       .card p { margin: 6px 0 0; color:#9eabc8; font-size:14px; }
       code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
@@ -37,10 +37,10 @@
       .code-wrap { margin: 10px 0 16px; }
       .code-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
       .code-head strong { color:#cdd8ff; font-size:14px; }
-      .copy-btn { border:1px solid #2a3142; background:#121a2d; color:#d6def2; border-radius:8px; padding:6px 10px; font-size:12px; cursor:pointer; }
+      .copy-btn { border:1px solid #31405f; background:#121a2d; color:#d6def2; border-radius:6px; padding:6px 10px; font-size:12px; cursor:pointer; }
       .copy-btn:hover { border-color:#3a4666; }
       .muted { color:#96a2bf; font-size: 13px; }
-      table { width:100%; border-collapse: collapse; border:1px solid #1f2739; border-radius: 12px; overflow:hidden; }
+      table { width:100%; border-collapse: collapse; border:1px solid #2a3550; border-radius: 10px; overflow:hidden; background:#0d121d; }
       th, td { text-align:left; padding:10px 12px; border-bottom:1px solid #1b2334; font-size:14px; }
       th { color:#cdd8ff; background:#101726; }
       tr:last-child td { border-bottom:none; }
