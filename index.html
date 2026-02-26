@@ -165,56 +165,20 @@
 
       <div class="code-wrap">
         <div class="code-head">
-          <strong>Chat in 60s (Node.js)</strong>
-          <button class="copy-btn" data-copy="#cmd-chat60" aria-label="Copy chat quickstart command" title="Copy">⧉</button>
+          <strong>Verify in 60s</strong>
+          <button class="copy-btn" data-copy="#cmd-chat60" aria-label="Copy 60-second verification command" title="Copy">⧉</button>
         </div>
-        <pre id="cmd-chat60"><code>npm i x402 viem
-
-export PRIVATE_KEY=0xYOUR_PRIVATE_KEY
-node -e '
-const { privateKeyToAccount } = require("viem/accounts");
-const { createPaymentHeader, selectPaymentRequirements } = require("x402/client");
-
-(async () => {
-  const gateway = "https://api.speakeasyrelay.com";
-  const account = privateKeyToAccount(process.env.PRIVATE_KEY);
-
-  const pricingRes = await fetch(`${gateway}/v1/pricing`);
-  const pricing = await pricingRes.json();
-  const model = "venice-uncensored";
-
-  const selected = selectPaymentRequirements(pricing.models[model].accepts, "base");
-  const req = {
-    ...selected,
-    network: selected.network === "eip155:8453" ? "base" : selected.network,
-    maxAmountRequired: selected.maxAmountRequired || selected.amount,
-    resource: selected.resource || pricing.models[model].resource?.url || `${gateway}/v1/chat/completions`
-  };
-
-  const payment = await createPaymentHeader(account, pricing.models[model].x402Version, req);
-
-  const body = {
-    model,
-    messages: [{ role: "user", content: "Say hello in one sentence." }],
-    max_tokens: 64,
-    stream: true,
-  };
-
-  const res = await fetch(`${gateway}/v1/chat/completions`, {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-      "payment-signature": payment,
-      "x-payment": payment,
-    },
-    body: JSON.stringify(body),
-  });
-
-  console.log(await res.text());
-})();
-'</code></pre>
+        <pre id="cmd-chat60"><code>PRIVATE_KEY=0xYOUR_PRIVATE_KEY node scripts/chat-in-60s.cjs</code></pre>
       </div>
-      <p class="muted">Pre-signing from <span class="mono">/v1/pricing</span> avoids first-request 402 round-trip.</p>
+
+      <div class="code-wrap">
+        <div class="code-head">
+          <strong>Local interactive chat</strong>
+          <button class="copy-btn" data-copy="#cmd-chatlocal" aria-label="Copy local chat command" title="Copy">⧉</button>
+        </div>
+        <pre id="cmd-chatlocal"><code>PRIVATE_KEY=0xYOUR_PRIVATE_KEY node scripts/chat-local.cjs</code></pre>
+      </div>
+      <p class="muted">These scripts live in the private Speakeasy gateway repo and perform signed paid requests against the live endpoint.</p>
 
       <footer>
         <a href="https://api.speakeasyrelay.com/v1/chat/completions" target="_blank" rel="noreferrer">API</a>
